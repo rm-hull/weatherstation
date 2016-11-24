@@ -12,7 +12,7 @@ TODO
 References
 ----------
 
-TODO
+* http://www.instructables.com/id/Raspberry-datalogger-with-Mysql-Highcharts/
 
 License
 -------
