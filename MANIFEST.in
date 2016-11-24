@@ -1,0 +1,13 @@
+include README.rst LICENSE.rst CHANGES.rst tox.ini setup.cfg
+
+recursive-include ablargern *.py
+
+recursive-include examples *
+
+recursive-include doc *
+prune docs/_build
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+recursive-exclude * *~
+recursive-exclude * .coverage
