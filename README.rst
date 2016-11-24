@@ -1,5 +1,8 @@
 BM280 Weatherstation
 ====================
+.. image:: https://travis-ci.org/rm-hull/weatherstation.svg?branch=master
+   :target: https://travis-ci.org/rm-hull/weatherstation
+   
 
 TODO
 
