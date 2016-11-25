@@ -23,37 +23,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import smbus2
-import bme280
+import asyncio
+
+import data_collector
+import store
+import config
 
 
-def stdout_logger(loop, data):
-    print(data)
+def main():
+    db = store.local_db(config.db_name)
+    ts = store.thing_speak(config.api_key)
+
+    def cb(loop, data):
+        print(data)
+        loop.run_in_executor(None, db.persist, data)
+        loop.run_in_executor(None, ts.persist, data)
+
+    loop = asyncio.get_event_loop()
+
+    dc = data_collector.environment_sensor(interval=config.update_interval, callback=cb)
+    dc.start(loop)
+
+    loop.run_forever()
+    loop.close()
 
 
-class environment_sensor(object):
-
-    def __init__(self, bus=None, port=1, address=0x76, interval=60, callback=stdout_logger):
-        self._bus = bus or smbus2.SMBus(port)
-        self._address = address
-        self._interval = interval
-        self._callback = callback
-        self._shutdown = False
-
-        try:
-            bme280.load_calibration_params(self._bus, self._address)
-        except:
-            pass
-
-    def start(self, loop):
-        if not self._shutdown:
-            loop.call_soon(self._ticker, loop)
-
-    def shutdown(self):
-        self._shutdown = True
-
-    def _ticker(self, loop):
-        if not self._shutdown:
-            data = bme280.sample(self._bus, self._address)
-            self._callback(loop, data)
-            loop.call_later(self._interval, self._ticker, loop)
+if __name__ == "__main__":
+    main()
