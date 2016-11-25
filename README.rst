@@ -1,13 +1,53 @@
-BM280 Weatherstation
-====================
+BME280 Weatherstation
+=====================
 .. image:: https://travis-ci.org/rm-hull/weatherstation.svg?branch=master
    :target: https://travis-ci.org/rm-hull/weatherstation
    
 
-TODO
+This weatherstation is a comprised of a number of components:
 
-.. image:: https://raw.githubusercontent.com/rm-hull/weatherstation/master/doc/bme280-weatherstation.jpg
-   :alt: mounted
+* OrangePi Zero:
+
+  * Armbian 5.24 (Jessie server)
+  * H2+ ARM CPU - 4x cores
+  * 256Mb RAM 
+  * 2Gb SDHC card
+  * WiFi, Ethernet
+  * $6.99
+
+* Small stripboard circuit comprising:
+  
+  * 26-pin IDC socket
+  * SSD1306 128x64 pixel OLED display, I2C version
+  * BME280 Environment sensor (temperature, pressure and humidity)
+  * 3mm LED
+  * Pushbutton
+  
+* Web monitoring / charting:
+
+  * http://www.destructuring-bind.org/weatherstation/
+  * Static HTML page, served out of Github
+  * ThingSpeak / Highchart.js integration
+
+* Python 3 async data-logger:
+
+  * Uses https://github.com/rm-hull/bme280 for sampling every 30 seconds
+  * Uses https://github.com/rm-hull/ssd1306 for local display
+  * Persists readings to a local SQLite database
+  * Uploads readings to a https://api.thinkspeak.com channel
+
+.. image:: doc/bme280-weatherstation.jpg?raw=true
+.. image:: doc/web-weatherstation.png?raw=true 
+
+TODO
+----
+* SSD1306 screen display
+* Toggle display on/off with pushbutton
+* Flash LED when taking a reading
+* Config options as command line args
+* Refactor JS
+* Dewpoint estimate
+* LUX sensor
 
 References
 ----------
