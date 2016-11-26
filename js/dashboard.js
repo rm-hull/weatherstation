@@ -148,7 +148,7 @@ $(document).ready(function() {
                   updateChannel(channelKeys[channelIndex]);
                 }
               }
-            }, 15000);
+            }, 30000);
           }
         }
       },
