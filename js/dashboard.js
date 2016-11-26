@@ -24,11 +24,6 @@ channelKeys.push({
     axis: 'P'
   }]
 });
-/*channelKeys.push({channelNumber:5683, name:'Sam Rogers Solar System',key:'XXXXXXXXXXXXXXXX',
-   fieldList:[{field:1,axis:'T'},{field:2,axis:'T'},{field:3,axis:'T'},{field:4,axis:'T'},{field:5,axis:'T'},{field:6,axis:'T'}]});
-channelKeys.push({channelNumber:9354, name:'CRYSTAL CITY WEATHER Fault',key:'XXXXXXXXXXXXXXXX',
-   fieldList:[{field:1,axis:'T'},{field:2,axis:'O'},{field:3,axis:'O'},{field:4,axis:'O'},{field:5,axis:'O'},{field:6,axis:'O'}]});
- */
 // user's timezone offset
 var myOffset = new Date().getTimezoneOffset();
 
@@ -40,31 +35,19 @@ function getChartDate(d) {
   return Date.UTC(d.substring(0, 4), d.substring(5, 7) - 1, d.substring(8, 10), d.substring(11, 13), d.substring(14, 16), d.substring(17, 19)) - (myOffset * 60000);
 }
 
-// Hide all series, via 'Hide All' button.  Then user can click on serries name in legent to show series of interest.
-function HideAll() {
-  for (var index = 0; index < dynamicChart.series.length; index++) // iterate through each series
-  {
-    if (dynamicChart.series[index].name == 'Navigator')
-      continue;
-    dynamicChart.series[index].hide();
-    //window.console && console.log('Series Number:',index,' Name:',dynamicChart.series[index].name);
-  }
-  //});
-
-}
 
 //  This is where the chart is generated.
 $(document).ready(function() {
+  $.ajaxSetup({ cache: false });
+
   //Add Channel Load Menu
-  var menu = document.getElementById("Channel Select");
-  for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) // iterate through each channel
+  var menu = document.getElementById("channel-select");
+  for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++)
   {
-    window.console && console.log('Name', channelKeys[channelIndex].name);
     var menuOption = new Option(channelKeys[channelIndex].name, channelIndex);
     menu.options.add(menuOption, channelIndex);
   }
   var last_date; // variable for the last date added to the chart
-  window.console && console.log('Testing console');
   //make series numbers for each field
   var seriesCounter = 0
   for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) // iterate through each channel
@@ -83,42 +66,38 @@ $(document).ready(function() {
     loadThingSpeakChannel(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
 
   }
-  //window.console && console.log('Channel Keys',channelKeys);
 
   // load the most recent 2500 points (fast initial load) from a ThingSpeak channel into a data[] array and return the data[] array
   function loadThingSpeakChannel(sentChannelIndex, channelNumber, key, sentFieldList) {
     var fieldList = sentFieldList;
     var channelIndex = sentChannelIndex;
     // get the Channel data with a webservice call
-    $.getJSON('https://api.thingspeak.com/channels/' + channelNumber + '/feed.json?callback=?&offset=0&results=2500;key=' + key, function(data) {
+    $.getJSON('https://api.thingspeak.com/channels/' + channelNumber + '/feed.json?round=3&results=241&api_key=' + key, function(data) {
         // if no access
         if (data == '-1') {
           $('#chart-container').append('This channel is not public.  To embed charts, the channel must be public or a read key must be specified.');
-          window.console && console.log('Thingspeak Data Loading Error');
+          console.log('Thingspeak Data Loading Error');
         }
         for (var fieldIndex = 0; fieldIndex < fieldList.length; fieldIndex++) // iterate through each field
         {
           fieldList[fieldIndex].data = [];
+          var field = "field" + fieldList[fieldIndex].field;
           for (var h = 0; h < data.feeds.length; h++) // iterate through each feed (data point)
           {
-            var p = [] //new Highcharts.Point();
-            var fieldStr = "data.feeds[" + h + "].field" + fieldList[fieldIndex].field;
-            var v = eval(fieldStr);
-            p[0] = getChartDate(data.feeds[h].created_at);
-            p[1] = parseFloat(v);
-            // if a numerical value exists add it
-            if (!isNaN(parseInt(v))) {
+            var v = data.feeds[h][field];
+            var p = [getChartDate(data.feeds[h].created_at), parseFloat(v)];
+            if (!isNaN(p[1])) {
               fieldList[fieldIndex].data.push(p);
             }
           }
-          fieldList[fieldIndex].name = eval("data.channel.field" + fieldList[fieldIndex].field);
+          fieldList[fieldIndex].name = data.channel[field];
         }
-        window.console && console.log('getJSON field name:', fieldList[0].name);
+        console.log('getJSON field name:', fieldList[0].name);
         channelKeys[channelIndex].fieldList = fieldList;
         channelKeys[channelIndex].loaded = true;
         channelsLoaded++;
-        window.console && console.log('channels Loaded:', channelsLoaded);
-        window.console && console.log('channel index:', channelIndex);
+        console.log('channels Loaded:', channelsLoaded);
+        console.log('channel index:', channelIndex);
         if (channelsLoaded == channelKeys.length) {
           createChart();
         }
@@ -127,6 +106,7 @@ $(document).ready(function() {
         alert('getJSON request failed! ');
       });
   }
+
   // create the chart when all data is loaded
   function createChart() {
     // specify the chart options
@@ -139,40 +119,34 @@ $(document).ready(function() {
 
             setInterval(function() {
               // If the update checkbox is checked, get latest data every 15 seconds and add it to the chart
-              if (document.getElementById("Update").checked) {
+              if (document.getElementById("auto-update").checked) {
                 for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) // iterate through each channel
                 {
                   (function(channelIndex) {
                     // get the data with a webservice call
-                    $.getJSON('https://www.thingspeak.com/channels/' + channelKeys[channelIndex].channelNumber + '/feed/last.json?callback=?&amp;offset=0&amp;location=false;key=' + channelKeys[channelIndex].key, function(data) {
+                    $.getJSON('https://api.thingspeak.com/channels/' + channelKeys[channelIndex].channelNumber + '/feed/last.json?round=3&location=false&api_key=' + channelKeys[channelIndex].key, function(data) {
                       for (var fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++) {
                         // if data exists
-                        var fieldStr = "data.field" + channelKeys[channelIndex].fieldList[fieldIndex].field;
-                        var chartSeriesIndex = channelKeys[channelIndex].fieldList[fieldIndex].series;
-                        if (data && eval(fieldStr)) {
-                          var p = [] //new Highcharts.Point();
-                          var v = eval(fieldStr);
-                          p[0] = getChartDate(data.created_at);
-                          p[1] = parseFloat(v);
+                        var field = "field" + channelKeys[channelIndex].fieldList[fieldIndex].field;
+                        if (data && data[field]) {
+                          var chartSeriesIndex = channelKeys[channelIndex].fieldList[fieldIndex].series;
+                          var v = data[field];
+                          var p = [getChartDate(data.created_at), parseFloat(v)];
                           // get the last date if possible
                           if (dynamicChart.series[chartSeriesIndex].data.length > 0) {
                             last_date = dynamicChart.series[chartSeriesIndex].data[dynamicChart.series[chartSeriesIndex].data.length - 1].x;
                           }
-                          var shift = false; //default for shift
                           // if a numerical value exists and it is a new date, add it
-                          if (!isNaN(parseInt(v)) && (p[0] != last_date)) {
-                            dynamicChart.series[chartSeriesIndex].addPoint(p, true, shift);
+                          if (!isNaN(p[1]) && (p[0] != last_date)) {
+                            dynamicChart.series[chartSeriesIndex].addPoint(p, true, false /* shift */);
                           }
                         }
                       }
-
-
                     });
                   })(channelIndex);
                 }
               }
             }, 15000);
-
           }
         }
       },
@@ -181,6 +155,14 @@ $(document).ready(function() {
           count: 30,
           type: 'minute',
           text: '30M'
+        }, {
+          count: 2,
+          type: 'hour',
+          text: '2H'
+        }, {
+          count: 6,
+          type: 'hour',
+          text: '6H'
         }, {
           count: 12,
           type: 'hour',
@@ -214,12 +196,6 @@ $(document).ready(function() {
       plotOptions: {
         line: {
           gapSize: 5
-            //color: '#d62020'
-            //  },
-            //  bar: {
-            //color: '#d52020'
-            //  },
-            //  column: {
         },
         series: {
           marker: {
@@ -230,17 +206,6 @@ $(document).ready(function() {
           turboThrehold: 1000,
           borderWidth: 0
         }
-      },
-      tooltip: {
-        valueDecimals: 1,
-        //valueSuffix: '°C',
-        xDateFormat: '%Y-%m-%d<br/>%H:%M:%S %p'
-          // reformat the tooltips so that local times are displayed
-          //formatter: function() {
-          //var d = new Date(this.x + (myOffset*60000));
-          //var n = (this.point.name === undefined) ? '' : '<br/>' + this.point.name;
-          //return this.series.name + ':<b>' + this.y + '</b>' + n + '<br/>' + d.toDateString() + '<br/>' + d.toTimeString().replace(/\(.*\)/, "");
-          //}
       },
       xAxis: {
         type: 'datetime',
@@ -260,20 +225,29 @@ $(document).ready(function() {
           text: 'Temperature (°C)'
         },
         opposite: false,
-        lineWidth: 1
+        lineWidth: 1,
+        labels: {
+            format: '{value:.1f}'
+        }
       }, {
         id: 'H',
         title: {
           text: 'Humidity (% rH)'
         },
         opposite: true,
-        lineWidth: 1
+        lineWidth: 1,
+        labels: {
+            format: '{value:.1f}'
+        }
       }, {
         id: 'P',
         title: {
           text: 'Pressure (hPa)'
         },
-        opposite: true
+        opposite: true,
+        labels: {
+            format: '{value:.1f}'
+        }
       }],
       exporting: {
         enabled: true,
@@ -291,7 +265,6 @@ $(document).ready(function() {
         }
       },
       series: []
-        //series: [{data:[[getChartDate("2013-06-16T00:32:40Z"),75]]}]
     };
 
     // add all Channel data to the chart
@@ -299,13 +272,18 @@ $(document).ready(function() {
     {
       for (var fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++) // add each field
       {
-        window.console && console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
+        console.log('Channel ' + channelIndex + ' field ' + fieldIndex);
+        var field = channelKeys[channelIndex].fieldList[fieldIndex];
+        var nameParts = /(.*) \((.*)\)/g.exec(field.name);
         chartOptions.series.push({
-          data: channelKeys[channelIndex].fieldList[fieldIndex].data,
-          index: channelKeys[channelIndex].fieldList[fieldIndex].series,
-          yAxis: channelKeys[channelIndex].fieldList[fieldIndex].axis,
-          //visible:false,
-          name: channelKeys[channelIndex].fieldList[fieldIndex].name
+          data: field.data,
+          index: field.series,
+          yAxis: field.axis,
+          name: field.name,
+          tooltip: {
+            valueDecimals: 2,
+            valueSuffix: ' ' + nameParts[2]
+          }
         });
       }
     }
@@ -330,14 +308,13 @@ $(document).ready(function() {
       }
     }
     // add all history
-    //dynamicChart.showLoading("Loading History..." );
-    window.console && console.log('Channels: ', channelKeys.length);
+    console.log('Channels: ', channelKeys.length);
     for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) // iterate through each channel
     {
-      window.console && console.log('channelIndex: ', channelIndex);
+      console.log('channelIndex: ', channelIndex);
       (function(channelIndex) {
         //load only 1 set of 8000 points
-        loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, 1);
+        loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
       })(channelIndex);
     }
   }
@@ -345,49 +322,44 @@ $(document).ready(function() {
 
 function loadOneChannel() {
   // load a channel selected in the popUp menu.
-  var selectedChannel = document.getElementById("Channel Select");
-  var maxLoads = document.getElementById("Loads").value;
+  var selectedChannel = document.getElementById("channel-select");
   var channelIndex = selectedChannel.selectedIndex;
-  loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList, 0, maxLoads);
+  loadChannelHistory(channelIndex, channelKeys[channelIndex].channelNumber, channelKeys[channelIndex].key, channelKeys[channelIndex].fieldList);
 }
 
 // load next 8000 points from a ThingSpeak channel and addPoints to a series
-function loadChannelHistory(sentChannelIndex, channelNumber, key, sentFieldList, sentNumLoads, maxLoads) {
-  var numLoads = sentNumLoads
+function loadChannelHistory(sentChannelIndex, channelNumber, key, sentFieldList) {
+  dynamicChart.showLoading("Loading History..." );
   var fieldList = sentFieldList;
   var channelIndex = sentChannelIndex;
   var first_Date = new Date();
-  if (typeof fieldList[0].data[0] != "undefined") first_Date.setTime(fieldList[0].data[0][0] + 7 * 60 * 60 * 1000); //adjust for 7 hour difference from GMT (Zulu time)
-  else if (typeof fieldList[1].data[0] != "undefined") first_Date.setTime(fieldList[1].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[2].data[0] != "undefined") first_Date.setTime(fieldList[2].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[3].data[0] != "undefined") first_Date.setTime(fieldList[3].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[4].data[0] != "undefined") first_Date.setTime(fieldList[4].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[5].data[0] != "undefined") first_Date.setTime(fieldList[5].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[6].data[0] != "undefined") first_Date.setTime(fieldList[6].data[0][0] + 7 * 60 * 60 * 1000);
-  else if (typeof fieldList[7].data[0] != "undefined") first_Date.setTime(fieldList[7].data[0][0] + 7 * 60 * 60 * 1000);
+  if (typeof fieldList[0].data[0] != "undefined")      first_Date.setTime(fieldList[0].data[0][0]);
+  else if (typeof fieldList[1].data[0] != "undefined") first_Date.setTime(fieldList[1].data[0][0]);
+  else if (typeof fieldList[2].data[0] != "undefined") first_Date.setTime(fieldList[2].data[0][0]);
+  else if (typeof fieldList[3].data[0] != "undefined") first_Date.setTime(fieldList[3].data[0][0]);
+  else if (typeof fieldList[4].data[0] != "undefined") first_Date.setTime(fieldList[4].data[0][0]);
+  else if (typeof fieldList[5].data[0] != "undefined") first_Date.setTime(fieldList[5].data[0][0]);
+  else if (typeof fieldList[6].data[0] != "undefined") first_Date.setTime(fieldList[6].data[0][0]);
+  else if (typeof fieldList[7].data[0] != "undefined") first_Date.setTime(fieldList[7].data[0][0]);
   var end = first_Date.toJSON();
-  window.console && console.log('earliest date:', end);
-  window.console && console.log('sentChannelIndex:', sentChannelIndex);
-  window.console && console.log('numLoads:', numLoads);
+  console.log('earliest date:', end);
+  console.log('sentChannelIndex:', sentChannelIndex);
   // get the Channel data with a webservice call
-  $.getJSON('https://www.thingspeak.com/channels/' + channelNumber + '/feed.json?callback=?&amp;offset=0&amp;start=2013-01-20T00:00:00;end=' + end + ';key=' + key, function(data) {
+  $.getJSON('https://api.thingspeak.com/channels/' + channelNumber + '/feed.json?round=3&start=2016-11-23T00:00:00&end=' + end + '&api_key=' + key, function(data) {
+    dynamicChart.hideLoading();
     // if no access
     if (data == '-1') {
       $('#chart-container').append('This channel is not public.  To embed charts, the channel must be public or a read key must be specified.');
-      window.console && console.log('Thingspeak Data Loading Error');
+      console.log('Thingspeak Data Loading Error');
     }
     for (var fieldIndex = 0; fieldIndex < fieldList.length; fieldIndex++) // iterate through each field
     {
-      //fieldList[fieldIndex].data =[];
       for (var h = 0; h < data.feeds.length; h++) // iterate through each feed (data point)
       {
-        var p = [] //new Highcharts.Point();
-        var fieldStr = "data.feeds[" + h + "].field" + fieldList[fieldIndex].field;
-        var v = eval(fieldStr);
-        p[0] = getChartDate(data.feeds[h].created_at);
-        p[1] = parseFloat(v);
-        // if a numerical value exists add it
-        if (!isNaN(parseInt(v))) {
+        var field = "field" + fieldList[fieldIndex].field;
+        var v = data.feeds[h][field];
+        var p = [getChartDate(data.feeds[h].created_at), parseFloat(v)];
+        if (!isNaN(p[1])) {
           fieldList[fieldIndex].data.push(p);
         }
       }
@@ -395,16 +367,9 @@ function loadChannelHistory(sentChannelIndex, channelNumber, key, sentFieldList,
         return a[0] - b[0]
       });
       dynamicChart.series[fieldList[fieldIndex].series].setData(fieldList[fieldIndex].data, false);
-      //dynamicChart.series[fieldList[fieldIndex].series].addPoint(fieldList[fieldIndex].data,false);
-      //fieldList[fieldIndex].name = eval("data.channel.field"+fieldList[fieldIndex].field);
-      //window.console && console.log('data added to series:',fieldList[fieldIndex].series,fieldList[fieldIndex].data);
     }
     channelKeys[channelIndex].fieldList = fieldList;
     dynamicChart.redraw()
-    window.console && console.log('channel index:', channelIndex);
-    numLoads++;
-    if (numLoads < maxLoads) {
-      loadChannelHistory(channelIndex, channelNumber, key, fieldList, numLoads, maxLoads);
-    }
+    console.log('channel index:', channelIndex);
   });
 }
