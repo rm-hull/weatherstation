@@ -99,6 +99,7 @@ $(document).ready(function() {
         console.log('channels Loaded:', channelsLoaded);
         console.log('channel index:', channelIndex);
         if (channelsLoaded == channelKeys.length) {
+          $("#controls").show();
           createChart();
         }
       })
