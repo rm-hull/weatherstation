@@ -113,7 +113,7 @@ $(document).ready(function() {
     var chartOptions = {
       chart: {
         renderTo: 'chart-container',
-        zoomType: 'y',
+        zoomType: 'xy',
         events: {
           load: function() {
 
