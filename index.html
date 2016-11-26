@@ -7,19 +7,39 @@
     <script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
     <script src="https://rawgit.com/highslide-software/export-csv/master/export-csv.js"></script>
     <script type="text/javascript" src="js/dashboard.js"></script>
-    <title>Weather station</title>
+    <title>Weatherstation</title>
+    <style>
+      body {
+        background-color: white;
+        font-family: sans-serif;
+        font-size: 12px;
+      }
+      h2 {
+        font-size: 64px;
+        text-shadow: 0px 1px 2px black;
+        color: #f9f9f9
+      }
+      #please-wait {
+        text-align: center;
+      }
+      #chart-container {
+        height: 600px;
+      }
+      #controls {
+        display: none;
+      }
+    </style>
   </head>
-  <body style="background-color: white;">
-    <div id="chart-container" style="height: 600px;">
-      <br>
-      Please wait ... loading data<br>
+  <body >
+    <div id="chart-container">
+      <h2 id="please-wait"> Please wait &ndash; loading data</h2>
     </div>
-    <div> 
+    <div id="controls"> 
       <label for="channel-select">Channel</label>
       <select id="channel-select"></select>
       <label for="auto-update">Auto-update</label>
       <input id="auto-update" type="checkbox" checked>
-      <button style="width: 162px; margin-top: -18px;" value="Load More Data" name="Load More Data" onclick="loadOneChannel();">Load More Historical Data</button>
+      <button value="Load More Data" name="Load More Data" onclick="loadOneChannel();">Load More Historical Data</button>
     </div>
   </body>
 </html>
