@@ -108,6 +108,29 @@ $(document).ready(function() {
       });
   }
 
+  function updateChannel(channel) {
+    // get the data with a webservice call
+    $.getJSON('https://api.thingspeak.com/channels/' + channel.channelNumber + '/feed/last.json?round=3&location=false&api_key=' + channel.key, function(data) {
+      for (var fieldIndex = 0; fieldIndex < channel.fieldList.length; fieldIndex++) {
+        // if data exists
+        var field = "field" + channel.fieldList[fieldIndex].field;
+        if (data && data[field]) {
+          var chartSeriesIndex = channel.fieldList[fieldIndex].series;
+          var v = data[field];
+          var p = [getChartDate(data.created_at), parseFloat(v)];
+          // get the last date if possible
+          if (dynamicChart.series[chartSeriesIndex].data.length > 0) {
+            last_date = dynamicChart.series[chartSeriesIndex].data[dynamicChart.series[chartSeriesIndex].data.length - 1].x;
+          }
+          // if a numerical value exists and it is a new date, add it
+          if (!isNaN(p[1]) && p[0] != last_date) {
+            dynamicChart.series[chartSeriesIndex].addPoint(p, true, false /* shift */);
+          }
+        }
+      }
+    });
+  }
+
   // create the chart when all data is loaded
   function createChart() {
     // specify the chart options
@@ -118,34 +141,11 @@ $(document).ready(function() {
         zoomType: 'xy',
         events: {
           load: function() {
-
             setInterval(function() {
-              // If the update checkbox is checked, get latest data every 15 seconds and add it to the chart
+              // If the update checkbox is checked, get latest data every 30 seconds and add it to the chart
               if (document.getElementById("auto-update").checked) {
-                for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) // iterate through each channel
-                {
-                  (function(channelIndex) {
-                    // get the data with a webservice call
-                    $.getJSON('https://api.thingspeak.com/channels/' + channelKeys[channelIndex].channelNumber + '/feed/last.json?round=3&location=false&api_key=' + channelKeys[channelIndex].key, function(data) {
-                      for (var fieldIndex = 0; fieldIndex < channelKeys[channelIndex].fieldList.length; fieldIndex++) {
-                        // if data exists
-                        var field = "field" + channelKeys[channelIndex].fieldList[fieldIndex].field;
-                        if (data && data[field]) {
-                          var chartSeriesIndex = channelKeys[channelIndex].fieldList[fieldIndex].series;
-                          var v = data[field];
-                          var p = [getChartDate(data.created_at), parseFloat(v)];
-                          // get the last date if possible
-                          if (dynamicChart.series[chartSeriesIndex].data.length > 0) {
-                            last_date = dynamicChart.series[chartSeriesIndex].data[dynamicChart.series[chartSeriesIndex].data.length - 1].x;
-                          }
-                          // if a numerical value exists and it is a new date, add it
-                          if (!isNaN(p[1]) && (p[0] != last_date)) {
-                            dynamicChart.series[chartSeriesIndex].addPoint(p, true, false /* shift */);
-                          }
-                        }
-                      }
-                    });
-                  })(channelIndex);
+                for (var channelIndex = 0; channelIndex < channelKeys.length; channelIndex++) {
+                  updateChannel(channelKeys[channelIndex]);
                 }
               }
             }, 15000);
