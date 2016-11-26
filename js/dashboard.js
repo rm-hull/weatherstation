@@ -227,7 +227,7 @@ $(document).ready(function() {
         opposite: false,
         lineWidth: 1,
         labels: {
-            format: '{value:.1f}'
+            format: '{value:.2f}'
         }
       }, {
         id: 'H',
@@ -237,7 +237,7 @@ $(document).ready(function() {
         opposite: true,
         lineWidth: 1,
         labels: {
-            format: '{value:.1f}'
+            format: '{value:.2f}'
         }
       }, {
         id: 'P',
@@ -246,7 +246,7 @@ $(document).ready(function() {
         },
         opposite: true,
         labels: {
-            format: '{value:.1f}'
+            format: '{value:.2f}'
         }
       }],
       exporting: {
@@ -281,7 +281,7 @@ $(document).ready(function() {
           yAxis: field.axis,
           name: field.name,
           tooltip: {
-            valueDecimals: 2,
+            valueDecimals: 3,
             valueSuffix: ' ' + nameParts[2]
           }
         });
