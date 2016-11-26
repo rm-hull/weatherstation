@@ -153,42 +153,17 @@ $(document).ready(function() {
         }
       },
       rangeSelector: {
-        buttons: [{
-          count: 30,
-          type: 'minute',
-          text: '30M'
-        }, {
-          count: 2,
-          type: 'hour',
-          text: '2H'
-        }, {
-          count: 6,
-          type: 'hour',
-          text: '6H'
-        }, {
-          count: 12,
-          type: 'hour',
-          text: '12H'
-        }, {
-          count: 1,
-          type: 'day',
-          text: 'D'
-        }, {
-          count: 1,
-          type: 'week',
-          text: 'W'
-        }, {
-          count: 1,
-          type: 'month',
-          text: 'M'
-        }, {
-          count: 1,
-          type: 'year',
-          text: 'Y'
-        }, {
-          type: 'all',
-          text: 'All'
-        }],
+        buttons: [
+          { count: 30, type: 'minute', text: '30M' },
+          { count:  2, type: 'hour',   text: '2H' },
+          { count:  6, type: 'hour',   text: '6H' },
+          { count: 12, type: 'hour',   text: '12H' },
+          { count:  1, type: 'day',    text: 'D' },
+          { count:  1, type: 'week',   text: 'W' },
+          { count:  1, type: 'month',  text: 'M' },
+          { count:  1, type: 'year',   text: 'Y' },
+          {            type: 'all', text: 'All' }
+        ],
         inputEnabled: true,
         selected: 2
       },
@@ -221,36 +196,11 @@ $(document).ready(function() {
           text: 'test'
         }
       },
-      yAxis: [{
-        id: 'T',
-        title: {
-          text: 'Temperature (°C)'
-        },
-        opposite: false,
-        lineWidth: 1,
-        labels: {
-            format: '{value:.2f}'
-        }
-      }, {
-        id: 'H',
-        title: {
-          text: 'Humidity (% rH)'
-        },
-        opposite: true,
-        lineWidth: 1,
-        labels: {
-            format: '{value:.2f}'
-        }
-      }, {
-        id: 'P',
-        title: {
-          text: 'Pressure (hPa)'
-        },
-        opposite: true,
-        labels: {
-            format: '{value:.2f}'
-        }
-      }],
+      yAxis: [
+        { id: 'T', title: { text: 'Temperature (°C)' }, opposite: false, lineWidth: 1, labels: { format: '{value:.2f}' } },
+        { id: 'H', title: { text: 'Humidity (% rH)' }, opposite: true, lineWidth: 1, labels: { format: '{value:.2f}' } },
+        { id: 'P', title: { text: 'Pressure (hPa)' }, opposite: true, labels: { format: '{value:.2f}' } }
+      ],
       exporting: {
         enabled: true,
         csv: {
