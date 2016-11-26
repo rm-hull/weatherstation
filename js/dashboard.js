@@ -72,7 +72,7 @@ $(document).ready(function() {
     var fieldList = sentFieldList;
     var channelIndex = sentChannelIndex;
     // get the Channel data with a webservice call
-    $.getJSON('https://api.thingspeak.com/channels/' + channelNumber + '/feed.json?round=3&results=241&api_key=' + key, function(data) {
+    $.getJSON('https://api.thingspeak.com/channels/' + channelNumber + '/feed.json?round=3&results=721&api_key=' + key, function(data) {
         // if no access
         if (data == '-1') {
           $('#chart-container').append('This channel is not public.  To embed charts, the channel must be public or a read key must be specified.');
@@ -188,7 +188,7 @@ $(document).ready(function() {
           text: 'All'
         }],
         inputEnabled: true,
-        selected: 1
+        selected: 2
       },
       title: {
         text: ''
