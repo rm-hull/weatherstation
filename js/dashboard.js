@@ -167,9 +167,6 @@ $(document).ready(function() {
         inputEnabled: true,
         selected: 2
       },
-      title: {
-        text: ''
-      },
       plotOptions: {
         line: {
           gapSize: 5
@@ -186,14 +183,8 @@ $(document).ready(function() {
       },
       xAxis: {
         type: 'datetime',
-        ordinal: false,
-        min: Date.UTC(2016, 11, 23),
-        dateTimeLabelFormats: {
-          hour: '%l %p',
-          minute: '%l:%M %p'
-        },
         title: {
-          text: 'test'
+          text: 'Time'
         }
       },
       yAxis: [
@@ -239,9 +230,6 @@ $(document).ready(function() {
         });
       }
     }
-    // set chart labels here so that decoding occurs properly
-    //chartOptions.title.text = data.channel.name;
-    chartOptions.xAxis.title.text = 'Date';
 
     // draw the chart
     dynamicChart = new Highcharts.StockChart(chartOptions);
