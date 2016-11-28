@@ -41,7 +41,7 @@ def main():
 
     loop = asyncio.get_event_loop()
 
-    dc = data_collector.environment_sensor(interval=config.update_interval, callback=cb)
+    dc = data_collector.environment_sensor(port=config.i2c_port, interval=config.update_interval, callback=cb)
     dc.start(loop)
 
     loop.run_forever()
