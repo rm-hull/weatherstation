@@ -90,3 +90,5 @@ ENV/
 
 # SQLite database
 *.db
+
+nohup.out
