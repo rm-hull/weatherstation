@@ -45,9 +45,11 @@ TODO
 * Toggle display on/off with pushbutton
 * Flash LED when taking a reading
 * Config options as command line args
+  - specify port in config 
 * Refactor JS
 * Dewpoint estimate
 * LUX sensor
+* Full height chart in browser window
 
 References
 ----------
