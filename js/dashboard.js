@@ -115,6 +115,7 @@ $(document).ready(function() {
     var chartOptions = {
       colors: ['#7cb5ec', '#492970', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
       chart: {
+        type: 'spline',
         renderTo: 'chart-container',
         zoomType: 'xy',
         events: {
