@@ -225,7 +225,7 @@ $(document).ready(function() {
 
 function loadOneChannel() {
   // load a channel selected in the popUp menu.
-  loadChannelHistory(channelIndex, channel.channelNumber, channel.key, channel.fieldList);
+  loadChannelHistory(channel.channelNumber, channel.key, channel.fieldList);
 }
 
 // load next 8000 points from a ThingSpeak channel and addPoints to a series
@@ -269,6 +269,5 @@ function loadChannelHistory(channelNumber, key, sentFieldList) {
     }
     channel.fieldList = fieldList;
     dynamicChart.redraw()
-    console.log('channel index:', channelIndex);
   });
 }
