@@ -20,8 +20,8 @@ This weatherstation is a comprised of a number of components:
   * 26-pin IDC socket
   * SSD1306 128x64 pixel OLED display, I2C version
   * BME280 Environment sensor (temperature, pressure and humidity)
-  * 3mm LED
-  * Pushbutton
+  * 3mm LED (pin 8 / UART1_TX / PG06)
+  * Pushbutton (pin 10 / UART1_RX / PG07)
   
 * Web monitoring / charting:
 
