@@ -23,42 +23,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import smbus2
-import bme280
+import atexit
+import OPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BOARD)
+atexit.register(GPIO.cleanup)
 
 
-def stdout_logger(loop, data):
-    print(data)
+class led(object):
 
+    def __init__(self, board_pin):
+        self._pin = board_pin
+        GPIO.setup(self._pin, GPIO.OUT, initial=GPIO.LOW)
 
-class environment_sensor(object):
+    def on(self):
+        GPIO.output(self._pin, GPIO.HIGH)
 
-    def __init__(self, led=None, bus=None, port=1, address=0x76, interval=60, callback=stdout_logger):
-        self._led = led
-        self._bus = bus or smbus2.SMBus(port)
-        self._address = address
-        self._interval = interval
-        self._callback = callback
-        self._shutdown = False
-
-        try:
-            bme280.load_calibration_params(self._bus, self._address)
-        except:
-            pass
-
-    def start(self, loop):
-        if not self._shutdown:
-            loop.call_soon(self._ticker, loop)
-
-    def shutdown(self):
-        self._shutdown = True
-
-    def _ticker(self, loop):
-        if not self._shutdown:
-            if self._led:
-                self._led.on()
-                loop.call_later(1, self._led.off)
-
-            data = bme280.sample(self._bus, self._address)
-            self._callback(loop, data)
-            loop.call_later(self._interval, self._ticker, loop)
+    def off(self):
+        GPIO.output(self._pin, GPIO.LOW)

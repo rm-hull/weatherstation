@@ -16,10 +16,10 @@ setup(
     long_description=README,
     license="MIT",
     keywords=["raspberry pi", "orange pi", "banana pi", "rpi", "SSD1306", "BME280", "i2c", "temperature", "humidity", "pressure"],
-    url="https://github.com/rm-hull/bme280",
+    url="https://github.com/rm-hull/weatherstation",
     download_url="https://github.com/rm-hull/weatherstation/tarball/" + ablargern.__version__,
     packages=['ablargern'],
-    install_requires=["smbus2", "RPi.bme280", "ssd1306"],
+    install_requires=["smbus2", "RPi.bme280", "luma.oled", "OPi.GPIO"],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 4 - Beta",

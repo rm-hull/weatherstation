@@ -28,11 +28,13 @@ import asyncio
 import data_collector
 import store
 import config
+import util
 
 
 def main():
     db = store.local_db(config.db_name)
     ts = store.thing_speak(config.api_key)
+    led = util.led(board_pin=8)
 
     def cb(loop, data):
         print(data)
@@ -41,7 +43,7 @@ def main():
 
     loop = asyncio.get_event_loop()
 
-    dc = data_collector.environment_sensor(port=config.i2c_port, interval=config.update_interval, callback=cb)
+    dc = data_collector.environment_sensor(led=led, port=config.i2c_port, interval=config.update_interval, callback=cb)
     dc.start(loop)
 
     loop.run_forever()
