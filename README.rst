@@ -8,7 +8,7 @@ This weatherstation is a comprised of a number of components:
 
 * OrangePi Zero:
 
-  * Armbian 5.24 (Jessie server)
+  * Armbian 5.25 (Jessie server)
   * H2+ ARM CPU - 4x cores
   * 256Mb RAM 
   * 2Gb SDHC card
@@ -32,7 +32,7 @@ This weatherstation is a comprised of a number of components:
 * Python 3 async data-logger:
 
   * Uses https://github.com/rm-hull/bme280 for sampling every 30 seconds
-  * Uses https://github.com/rm-hull/ssd1306 for local display
+  * Uses https://github.com/rm-hull/luma.oled for local display
   * Persists readings to a local SQLite database
   * Uploads readings to a https://api.thinkspeak.com channel
 
@@ -43,7 +43,6 @@ TODO
 ----
 * SSD1306 screen display
 * Toggle display on/off with pushbutton
-* Flash LED when taking a reading
 * Config options as command line args
   - specify port in config 
 * Refactor JS
