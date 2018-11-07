@@ -34,7 +34,7 @@ This weatherstation is a comprised of a number of components:
   * Uses https://github.com/rm-hull/bme280 for sampling every 30 seconds
   * Uses https://github.com/rm-hull/luma.oled for local display
   * Persists readings to a local SQLite database
-  * Uploads readings to a https://api.thinkspeak.com channel
+  * Uploads readings to a https://api.thingspeak.com channel
 
 .. image:: doc/bme280-weatherstation.jpg?raw=true
 .. image:: doc/web-weatherstation.png?raw=true 
