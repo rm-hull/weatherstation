@@ -43,7 +43,7 @@ class environment_sensor(object):
 
         try:
             bme280.load_calibration_params(self._bus, self._address)
-        except:
+        except:  # noqa: E722
             pass
 
     def start(self, loop):
