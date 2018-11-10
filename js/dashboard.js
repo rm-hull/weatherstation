@@ -75,7 +75,6 @@ $(document).ready(function() {
           }
           fieldList[fieldIndex].name = data.channel[field];
         }
-        console.log('getJSON field name:', fieldList[0].name);
         channel.fieldList = fieldList;
         channel.loaded = true;
         $("#controls").show();
