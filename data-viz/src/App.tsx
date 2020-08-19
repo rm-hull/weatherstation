@@ -173,7 +173,7 @@ const App = () => {
               data: getSeries(feeds, f => f.field2),
               tooltip: {
                 valueDecimals: 1,
-                valueSuffix: '  % rH'
+                valueSuffix: '  hPa'
               }
             },
             {
