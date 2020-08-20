@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "2bf49b48ee71cce74d4af5ba052ef37e",
+    "revision": "71528279c0ce1d941c483ceda9dccbaf",
     "url": "/weatherstation/index.html"
   },
   {
-    "revision": "2f2b005a6ab5801af93d",
+    "revision": "41e03ee4450d29121254",
     "url": "/weatherstation/static/css/main.5f361e03.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/weatherstation/static/js/2.b7839b00.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "2f2b005a6ab5801af93d",
-    "url": "/weatherstation/static/js/main.9413b865.chunk.js"
+    "revision": "41e03ee4450d29121254",
+    "url": "/weatherstation/static/js/main.f96f8651.chunk.js"
   },
   {
     "revision": "de8cfff92d1619e1db81",
