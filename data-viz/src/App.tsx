@@ -154,7 +154,7 @@ const App = () => {
               }
             },
             tooltip: {
-              crosshairs: [false, true]
+              crosshairs: [true, false]
             },
             series: [{
               index: 0,
