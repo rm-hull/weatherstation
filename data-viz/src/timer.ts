@@ -6,5 +6,5 @@ export function useRecurringTimer(fn: (...args: any[]) => void, timeout: number)
         return function cleanup() {
             clearInterval(timerId);
         };
-    });
+    }, [fn, timeout]);
 }
